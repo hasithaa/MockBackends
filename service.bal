@@ -16,15 +16,15 @@ final readonly & table<CurrencyRate> key(sourceCurrency, targetCurrency) currenc
     {sourceCurrency: "AUD", targetCurrency: "USD", rate: 0.77}
 ];
 
-service on new http:Listener(9090) {
-    resource function get .(ConversionRequest req) returns ConversionResponse|http:NotFound {
+service /currency on new http:Listener(9090) {
+    resource function get rate(ConversionRequest req) returns ConversionResponse|ConversionNotFound {
         do {
             CurrencyRate rate = check trap currencyRates.get([req.sourceCurrency, req.targetCurrency]);
             var date = check time:civilToString(time:utcToCivil(time:utcNow()));
             return {rate: rate.rate, date};
         }
         on fail {
-            return <http:NotFound>{body: "Currency rate not found"};
+            return <ConversionNotFound>{body: {reason: "Currency rate not found"}};
         }
     }
 }
@@ -43,4 +43,11 @@ type ConversionRequest record {|
 type ConversionResponse record {|
     decimal rate;
     string date;
+|};
+
+type ConversionNotFound record {|
+    *http:NotFound;
+    record {
+        string reason;
+    } body;
 |};
