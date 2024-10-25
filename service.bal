@@ -17,7 +17,7 @@ final readonly & table<CurrencyRate> key(sourceCurrency, targetCurrency) currenc
 ];
 
 service /currency on new http:Listener(9090) {
-    resource function get rate(ConversionRequest req) returns ConversionResponse|ConversionNotFound {
+    resource function post rate(ConversionRequest req) returns ConversionResponse|ConversionNotFound {
         do {
             CurrencyRate rate = check trap currencyRates.get([req.sourceCurrency, req.targetCurrency]);
             var date = check time:civilToString(time:utcToCivil(time:utcNow()));

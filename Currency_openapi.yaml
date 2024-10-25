@@ -11,19 +11,17 @@ servers:
         default: '9090'
 paths:
   /rate:
-    get:
-      operationId: getRate
-      parameters:
-        - name: req
-          in: query
-          required: true
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConversionRequest'
+    post:
+      operationId: postRate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversionRequest'
+        required: true
       responses:
-        '200':
-          description: Ok
+        '201':
+          description: Created
           content:
             application/json:
               schema:
